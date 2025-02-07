@@ -22,16 +22,37 @@ A Visual Studio Code extension that lets you:
 
 ## Installation
 
-1. **From Marketplace**  
-   - Open VS Code.
-   - Go to the **Extensions** panel (`Ctrl+Shift+X` / `Cmd+Shift+X`).
-   - Search for "**Folder Tree Extension**" (or whatever your extension’s name is).
-   - Click **Install**.
+### **1. Create a VSIX Package**
+   If you want to create a `.vsix` file for local installation or distribution:
 
-2. **From VSIX** (if you have a `.vsix` package)  
-   - In VS Code, open the **Command Palette** (`Ctrl+Shift+P` / `Cmd+Shift+P`).
-   - Type `Extensions: Install from VSIX...`.
-   - Select the `.vsix` file.
+   1. **Install VSCE (if not already installed)**  
+      Run the following command to install Microsoft's VS Code Extension Manager (`vsce`):
+      ```bash
+      npm install -g vsce
+      ```
+
+   2. **Build the Extension**  
+      Ensure your extension is properly compiled:
+      ```bash
+      npm run compile
+      ```
+      or
+      ```bash
+      yarn compile
+      ```
+
+   3. **Generate the `.vsix` File**  
+      Run:
+      ```bash
+      vsce package
+      ```
+      This will generate a `.vsix` file in the project root (e.g., `folder-tree-1.0.0.vsix`).
+
+   4. **Install the `.vsix` File in VS Code**  
+      - Open the **Command Palette** (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+      - Select `Extensions: Install from VSIX...`.
+      - Choose the `.vsix` file.
+      - The extension will now be installed.
 
 ## Usage
 
