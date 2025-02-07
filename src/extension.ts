@@ -3,28 +3,51 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
-    const disposable = vscode.commands.registerCommand('folderTree.generateTree', async () => {
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (!workspaceFolders) {
-            vscode.window.showErrorMessage("No workspace folder is open.");
-            return;
+    const disposable = vscode.commands.registerCommand('folderTree.generateTree', async (uri?: vscode.Uri) => {
+        let folderPath: string | undefined;
+
+        // If the command is executed from the right-click menu, we get `uri`
+        if (uri && uri.fsPath) {
+            folderPath = uri.fsPath;
+        } else {
+            // Get selected folders from the VS Code Explorer
+            const editor = vscode.window.activeTextEditor;
+            if (editor) {
+                folderPath = path.dirname(editor.document.uri.fsPath);
+            } else {
+                const workspaceFolders = vscode.workspace.workspaceFolders;
+                if (!workspaceFolders || workspaceFolders.length === 0) {
+                    vscode.window.showErrorMessage("No workspace folder is open.");
+                    return;
+                }
+                folderPath = workspaceFolders[0].uri.fsPath; // Default to workspace root
+            }
         }
 
-        const workspacePath = workspaceFolders[0].uri.fsPath;
+        if (!folderPath) {
+            vscode.window.showErrorMessage("No folder selected.");
+            return;
+        }
 
         // Get exclude patterns from settings
         const excludePatterns = vscode.workspace.getConfiguration('folderTree').get<string[]>('exclude') || [];
 
-        const tree = buildTree(workspacePath, excludePatterns);
+        const tree = buildTree(folderPath, excludePatterns);
         const treeString = renderTree(tree);
 
         // Copy the tree structure to the clipboard
-        await vscode.env.clipboard.writeText(treeString);
-        vscode.window.showInformationMessage('Folder tree copied to clipboard! Paste it anywhere.');
+        try {
+            await vscode.env.clipboard.writeText(treeString);
+            vscode.window.showInformationMessage(`Folder tree copied from: ${folderPath}`);
+        } catch (error) {
+            vscode.window.showErrorMessage(`Failed to copy to clipboard: ${error}`);
+            console.error("Clipboard Error:", error);
+        }
     });
 
     context.subscriptions.push(disposable);
 }
+
 
 interface TreeNode {
     name: string;
