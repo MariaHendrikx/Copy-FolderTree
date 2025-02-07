@@ -22,7 +22,17 @@ A Visual Studio Code extension that lets you:
 
 ## Installation
 
-### **1. Create a VSIX Package**
+### **1. Clone the repo**
+1. **Clone the repo**:
+   ```bash
+   git clone https://github.com/MariaHendrikx/Copy-FolderTree.git
+   cd Copy-FolderTree
+   ```
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+### **2. Create a VSIX Package**
    If you want to create a `.vsix` file for local installation or distribution:
 
    1. **Install VSCE (if not already installed)**  
@@ -35,10 +45,6 @@ A Visual Studio Code extension that lets you:
       Ensure your extension is properly compiled:
       ```bash
       npm run compile
-      ```
-      or
-      ```bash
-      yarn compile
       ```
 
    3. **Generate the `.vsix` File**  
